@@ -10,6 +10,6 @@ build:
           file: 'clover.xml'
           format: 'clover'
 checks:
-    php:
-        code_rating: true
-        duplication: true
+  php:
+     code_rating: true
+     duplication: true
