@@ -11,11 +11,16 @@ class ClientTest extends TestCase
 
     protected function setUp()
     {
-        $this->client = new Client('testIdentifier');
+        $this->client = new Client('testIdentifier', 'testName');
     }
 
     public function testGetIdentifier()
     {
         $this->assertSame('testIdentifier', $this->client->getIdentifier());
+    }
+
+    public function testGetName()
+    {
+        $this->assertSame('testName', $this->client->getName());
     }
 }

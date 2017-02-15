@@ -10,19 +10,22 @@ class Client implements ClientEntityInterface
 {
     private $identifier;
 
-    public function __construct(string $identifier = null)
+    private $name;
+
+    public function __construct(string $identifier = null, string $name = null)
     {
         $this->identifier = $identifier;
+        $this->name = $name;
     }
 
-    public function getIdentifier()
+    public function getIdentifier() : string
     {
         return $this->identifier;
     }
 
-    public function getName()
+    public function getName() : string
     {
-
+        return $this->name;
     }
 
     public function getRedirectUri()
