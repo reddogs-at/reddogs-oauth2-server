@@ -1,0 +1,19 @@
+{
+    "name": "reddogs-at/reddogs-oauth2-server",
+    "description": "implementation of league/oauth2-server",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^7.0"
+    },
+    "autoload": {
+      "psr-4": {
+        "Reddogs\\OAuth2\\Server\\": "src/"
+      }
+    },
+    "autoload-dev": {
+      "psr-4": {
+        "ReddogsTest\\OAuth2\\Server\\": "test/"
+      }
+    }
+}
