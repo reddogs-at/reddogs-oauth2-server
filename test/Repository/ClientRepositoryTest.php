@@ -6,16 +6,19 @@
  * @license https://github.com/reddogs-at/reddogs-oauth2-server/blob/master/LICENSE MIT License
  */
 declare(strict_types = 1);
-namespace ReddogsTest\Oauth2\Server;
+namespace ReddogsTest\OAuth2\Server;
 
 use Reddogs\Doctrine\Test\EntityManagerAwareTestCase;
 use Reddogs\OAuth2\Server\Entity\Client;
 use Reddogs\OAuth2\Server\ModuleConfig;
 use Zend\Expressive\ConfigManager\PhpFileProvider;
-use Doctrine\ORM\EntityManager;
+use Reddogs\OAuth2\Server\Repository\ClientRepository;
+use Zend\Crypt\Password\Bcrypt;
 
 class ClientRepositoryTest extends EntityManagerAwareTestCase
 {
+    private $repository;
+
     protected function setUp()
     {
         $configProviders = [
@@ -28,14 +31,64 @@ class ClientRepositoryTest extends EntityManagerAwareTestCase
         $this->truncateEntities([
             Client::class
         ]);
+        $this->repository = new ClientRepository($this->getEntityManager());
     }
 
-    public function testTest()
+    public function testGetEntityManager()
     {
-        $container = $this->getContainer();
-        $em = $this->getContainer()->get(EntityManager::class);
+        $this->assertSame($this->getEntityManager(), $this->repository->getEntityManager());
+    }
 
-        //doctrine.connection.orm_default doctrine.configuration.orm_default
+    public function testGetClientEntity()
+    {
+        $em = $this->getEntityManager();
+        $client = new Client('testIdentifier', 'testSecret', 'testName', 'http://testRedirectUri', array('code', 'password'));
+        $em->persist($client);
+        $em->flush();
+
+        $this->assertEquals($client, $this->repository->getClientEntity('testIdentifier', 'code', null, false));
+    }
+
+    public function testGetClientEntityInvalidIdentifierReturnsNull()
+    {
+        $em = $this->getEntityManager();
+        $client = new Client('testIdentifier', 'testSecret', 'testName', 'http://testRedirectUri', array('code', 'password'));
+        $em->persist($client);
+        $em->flush();
+
+        $this->assertNull($this->repository->getClientEntity('invalidIdentifier', 'code', null, false));
+    }
+
+    public function testGetClientEntityWrongGrantTypeReturnsNull()
+    {
+        $em = $this->getEntityManager();
+        $client = new Client('testIdentifier', 'testSecret', 'testName', 'http://testRedirectUri', array('code', 'password'));
+        $em->persist($client);
+        $em->flush();
+
+        $this->assertNull($this->repository->getClientEntity('testIdentifier', 'authorization_code', null, false));
+    }
+
+    public function testGetClientEntityMustValidateSecret()
+    {
+        $bcrypt = new Bcrypt();
+        $em = $this->getEntityManager();
+        $client = new Client('testIdentifier', $bcrypt->create('testSecret'), 'testName', 'http://testRedirectUri', array('code', 'password'));
+        $em->persist($client);
+        $em->flush();
+
+        $this->assertEquals($client, $this->repository->getClientEntity('testIdentifier', 'code', 'testSecret', true));
+    }
+
+    public function testGetClientEntityMustValidateSecretInvalidSecretReturnsNull()
+    {
+        $bcrypt = new Bcrypt();
+        $em = $this->getEntityManager();
+        $client = new Client('testIdentifier', $bcrypt->create('testSecret'), 'testName', 'http://testRedirectUri', array('code', 'password'));
+        $em->persist($client);
+        $em->flush();
+
+        $this->assertNull($this->repository->getClientEntity('testIdentifier', 'code', 'InvalidSecret', true));
     }
 }
 

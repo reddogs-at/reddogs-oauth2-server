@@ -15,8 +15,16 @@ class Version20170222091156 extends AbstractMigration
      */
     public function up(Schema $schema)
     {
-        // this up() migration is auto-generated, please modify it to your needs
+        $table = $schema->createTable('reddogs_oauth2_server_client');
+        $table->addColumn('id', 'bigint', ['unsigned' => true, 'autoincrement' => true]);
+        $table->addColumn('identifier', 'string', ['length' => 32]);
+        $table->addColumn('secret', 'string', ['length' => 80]);
+        $table->addColumn('name', 'string', ['length' => 64, 'notnull' => false]);
+        $table->addColumn('redirect_uri', 'string', ['length' => 255, 'notnull' => false]);
+        $table->addColumn('grant_types', 'string', ['length' => 80, 'notnull' => false]);
 
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['identifier']);
     }
 
     /**
@@ -24,7 +32,6 @@ class Version20170222091156 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        // this down() migration is auto-generated, please modify it to your needs
-
+        $schema->dropTable('reddogs_oauth2_server_client');
     }
 }

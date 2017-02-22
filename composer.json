@@ -8,7 +8,8 @@
         "league/oauth2-server": "^5.1",
         "reddogs-at/reddogs-test": "^0.1.2",
         "reddogs-at/reddogs-doctrine": "^1.2",
-        "reddogs-at/reddogs-migrations": "^0.1.0"
+        "reddogs-at/reddogs-migrations": "^0.1.0",
+        "zendframework/zend-crypt": "^3.2"
     },
     "autoload": {
       "psr-4": {
