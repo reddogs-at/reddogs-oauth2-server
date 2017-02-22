@@ -20,14 +20,14 @@ class ClientRepositoryTest extends EntityManagerAwareTestCase
     {
         $configProviders = [
             ModuleConfig::class,
-            new PhpFileProvider('testconfig/autoload/{{,*.}global,{,*.}local}.php'),
+            new PhpFileProvider('config/autoload/{{,*.}testing}.php'),
         ];
         $this->setConfigProviders($configProviders);
         parent::setUp();
 
-//         $this->truncateEntities([
-//             Client::class
-//         ]);
+        $this->truncateEntities([
+            Client::class
+        ]);
     }
 
     public function testTest()

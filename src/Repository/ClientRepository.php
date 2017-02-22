@@ -11,6 +11,7 @@ namespace Reddogs\Oauth2\Server;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 
+
 class ClientRepository implements ClientRepositoryInterface
 {
 

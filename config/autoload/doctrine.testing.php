@@ -20,14 +20,6 @@ return [
         'driver' => [
             'orm_default' => [
                 'class' => \Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain::class,
-                'drivers' => [
-                    'Reddogs\Oauth2\Server\Entity' => 'reddogs_oauth2_server_entity',
-                ],
-            ],
-            'reddogs_oauth2_server_entity' => [
-                'class' => \Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
-                'cache' => 'array',
-                'paths' => __DIR__ . '/../../src/Entity',
             ],
         ],
     ],
