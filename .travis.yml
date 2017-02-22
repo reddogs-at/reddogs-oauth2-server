@@ -1,4 +1,6 @@
 language: php
+services:
+  - mysql
 
 sudo: false
 
@@ -9,7 +11,8 @@ cache:
 php:
   - 7.0
   - 7.1
-
+before_install:
+  - mysql -e 'CREATE DATABASE reddogs-oauth2-server'  
 install:
   - travis_retry composer install --no-interaction --prefer-source
 
