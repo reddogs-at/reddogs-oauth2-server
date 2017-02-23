@@ -8,19 +8,18 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20170223133253 extends AbstractMigration
+class Version20170223164705 extends AbstractMigration
 {
     /**
      * @param Schema $schema
      */
     public function up(Schema $schema)
     {
-        $table = $schema->createTable('reddogs_oauth2_server_access_token_scope');
-        $table->addColumn('access_token_id', 'bigint', ['unsigned' => true]);
+        $table = $schema->createTable('reddogs_oauth2_server_auth_code_scope');
+        $table->addColumn('auth_code_id', 'bigint', ['unsigned' => true]);
         $table->addColumn('scope_id', 'bigint', ['unsigned' => true]);
 
-        $table->setPrimaryKey(['access_token_id', 'scope_id']);
-
+        $table->setPrimaryKey(['auth_code_id', 'scope_id']);
     }
 
     /**
@@ -28,6 +27,6 @@ class Version20170223133253 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        $schema->dropTable('reddogs_oauth2_server_access_token_scope');
+        $schema->dropTable('reddogs_oauth2_server_auth_code_scope');
     }
 }

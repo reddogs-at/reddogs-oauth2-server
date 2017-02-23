@@ -8,16 +8,17 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20170223130505 extends AbstractMigration
+class Version20170223164348 extends AbstractMigration
 {
     /**
      * @param Schema $schema
      */
     public function up(Schema $schema)
     {
-        $table = $schema->createTable('reddogs_oauth2_server_access_token');
+        $table = $schema->createTable('reddogs_oauth2_server_auth_code');
         $table->addColumn('id', 'bigint', ['unsigned' => true, 'autoincrement' => true]);
         $table->addColumn('identifier', 'string', ['length' => 40]);
+        $table->addColumn('redirect_uri', 'string', ['length' => 255]);
         $table->addColumn('user_identifier', 'string', ['length' => 40]);
         $table->addColumn('expiry_date_time', 'datetime');
         $table->addColumn('client_id', 'bigint', ['unsigned' => true]);
@@ -32,6 +33,6 @@ class Version20170223130505 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        $schema->dropTable('reddogs_oauth2_server_access_token');
+        $schema->dropTable('reddogs_oauth2_server_auth_code');
     }
 }
