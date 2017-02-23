@@ -59,6 +59,8 @@ class AccessToken implements AccessTokenEntityInterface
     /**
      * Expiry date time
      *
+     * @ORM\Column(type="datetime", name="expiry_date_time")
+     *
      * @var \DateTime
      */
     private $expiryDateTime;
@@ -66,30 +68,28 @@ class AccessToken implements AccessTokenEntityInterface
     /**
      * User identifier
      *
-     * @var int
-     */
-    private  $userId;
-
-    /**
-     * User
+     * @ORM\Column(type="string", name="user_identifier")
      *
-     * @var User
+     * @var string
      */
-    private $user;
+    private  $userIdentifier;
 
     /**
      * Client
+     *
+     * @ORM\ManyToOne(targetEntity="Client")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id")
      *
      * @var ClientEntityInterface
      */
     private $client;
 
-    public function __construct($identifier = null, Client $client = null, $userId = null,
+    public function __construct($identifier = null, Client $client = null, $userIdentifier = null,
         \DateTime $expiryDateTime = null)
     {
         $this->identifier = $identifier;
         $this->client = $client;
-        $this->userId = $userId;
+        $this->userIdentifier = $userIdentifier;
         $this->scopes = new ArrayCollection();
         $this->expiryDateTime = $expiryDateTime;
     }
@@ -171,7 +171,7 @@ class AccessToken implements AccessTokenEntityInterface
      */
     public function setUserIdentifier($identifier)
     {
-        $this->userId = $identifier;
+        $this->userIdentifier = $identifier;
     }
 
     /**
@@ -181,7 +181,7 @@ class AccessToken implements AccessTokenEntityInterface
      */
     public function getUserIdentifier()
     {
-        return $this->userId;
+        return $this->userIdentifier;
     }
 
     /**

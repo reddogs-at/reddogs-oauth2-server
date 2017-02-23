@@ -74,6 +74,7 @@ class AccessTokenRepositoryTest extends EntityManagerAwareTestCase
 
         $token = $this->repository->getNewToken($client, [$scope], 17);
         $token->setIdentifier('generatedUniqueIdentifier');
+        $token->setExpiryDateTime(new \DateTime());
 
         $this->repository->persistNewAccessToken($token);
         $this->assertNotNull($token->getId());
@@ -92,6 +93,7 @@ class AccessTokenRepositoryTest extends EntityManagerAwareTestCase
 
         $token = $this->repository->getNewToken($client, [$scope], 17);
         $token->setIdentifier('generatedUniqueIdentifier');
+        $token->setExpiryDateTime(new \DateTime());
 
         $this->repository->persistNewAccessToken($token);
         $tokenIdentifier = $token->getIdentifier();
@@ -114,6 +116,7 @@ class AccessTokenRepositoryTest extends EntityManagerAwareTestCase
 
         $token = $this->repository->getNewToken($client, [$scope], 17);
         $token->setIdentifier('generatedUniqueIdentifier');
+        $token->setExpiryDateTime(new \DateTime());
         $this->repository->persistNewAccessToken($token);
 
         $this->assertFalse($this->repository->isAccessTokenRevoked('generatedUniqueIdentifier'));

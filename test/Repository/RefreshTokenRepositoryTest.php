@@ -56,7 +56,7 @@ class RefreshTokenRepositoryTest extends EntityManagerAwareTestCase
         $client = new Client('testIdentifier', 'testSecret');
         $em->persist($client);
 
-        $accessToken = new AccessToken('testIdentifier', $client, 17);
+        $accessToken = new AccessToken('testIdentifier', $client, 17, new \DateTime());
         $em->persist($accessToken);
 
         $em->flush();
