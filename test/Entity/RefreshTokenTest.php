@@ -23,6 +23,11 @@ class RefreshTokenTest extends TestCase
         $this->refreshToken = new RefreshToken('testIdentifier', $this->accessToken, $this->expiryDateTime);
     }
 
+    public function testGetId()
+    {
+        $this->assertNull($this->refreshToken->getId());
+    }
+
     public function testGetIdentifier()
     {
         $this->assertSame('testIdentifier', $this->refreshToken->getIdentifier());
