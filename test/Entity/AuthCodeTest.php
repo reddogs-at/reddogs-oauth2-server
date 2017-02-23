@@ -25,6 +25,11 @@ class AuthCodeTest extends TestCase
         $this->authCode = new AuthCode('testIdentifier', $this->client, 17, 'testRedirectUri', $this->expiryDateTime);
     }
 
+    public function testGetId()
+    {
+        $this->assertNull($this->authCode->getId());
+    }
+
     public function testGetIdentifier()
     {
         $this->assertSame('testIdentifier', $this->authCode->getIdentifier());

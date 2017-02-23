@@ -12,45 +12,110 @@ use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="reddogs_oauth2_server_auth_code")
+ */
 class AuthCode implements AuthCodeEntityInterface
 {
+    /**
+     * Id
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
+     *
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * Identifier
+     *
+     * @ORM\Column(type="string")
+     *
+     * @var string
+     */
     private $identifier;
 
     /**
+     * Redirect uri
+     *
+     * @ORM\Column(type="string", name="redirect_uri")
+     *
      * @var null|string
      */
     private $redirectUri;
 
    /**
+    * Scopes
+    *
+    * @ORM\ManyToMany(targetEntity="Scope")
+    * @ORM\JoinTable(name="reddogs_oauth2_server_auth_code_scope",
+    *      joinColumns={@ORM\JoinColumn(name="auth_code_id", referencedColumnName="id")},
+    *      inverseJoinColumns={@ORM\JoinColumn(name="scope_id", referencedColumnName="id")}
+    * )
     * @var ArrayCollection
     */
     private $scopes;
 
     /**
+     * Expiry date time
+     *
+     * @ORM\Column(type="datetime", name="expiry_date_time")
+     *
      * @var \DateTime
      */
     private $expiryDateTime;
 
     /**
-     * @var int
+     * User identifier
+     *
+     * @ORM\Column(type="string", name="user_identifier")
+     * @var string
      */
-    private $userId;
+    private $userIdentifier;
 
     /**
+     * Client
+     *
+     * @ORM\ManyToOne(targetEntity="Client")
+     * @ORM\JoinColumn(name="client_id", referencedColumnName="id")
+     *
      * @var ClientEntityInterface
      */
     private $client;
 
-    public function __construct($identifier = null, Client $client = null, int $userId = null,
+    /**
+     * Constructor
+     *
+     * @param unknown $identifier
+     * @param Client $client
+     * @param int $userId
+     * @param string $redirectUri
+     * @param \DateTime $expiryDateTime
+     */
+    public function __construct(string $identifier = null, Client $client = null, int $userId = null,
         string $redirectUri = null, \DateTime $expiryDateTime = null)
     {
         $this->identifier = $identifier;
         $this->client = $client;
-        $this->userId = $userId;
+        $this->userIdentifier = $userId;
         $this->redirectUri = $redirectUri;
         $this->expiryDateTime = $expiryDateTime;
         $this->scopes = new ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -102,6 +167,7 @@ class AuthCode implements AuthCodeEntityInterface
      * Return an array of scopes associated with the token.
      *
      * @return ArrayCollection
+     * @todo return array instead of array collection
      */
     public function getScopes()
     {
@@ -135,7 +201,7 @@ class AuthCode implements AuthCodeEntityInterface
      */
     public function setUserIdentifier($identifier)
     {
-        $this->userId = $identifier;
+        $this->userIdentifier = $identifier;
     }
 
     /**
@@ -145,7 +211,7 @@ class AuthCode implements AuthCodeEntityInterface
      */
     public function getUserIdentifier()
     {
-        return $this->userId;
+        return $this->userIdentifier;
     }
 
     /**
