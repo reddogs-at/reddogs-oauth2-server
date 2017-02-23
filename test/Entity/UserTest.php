@@ -24,6 +24,12 @@ class UserTest extends TestCase
         $this->assertNull($this->user->getIdentifier());
     }
 
+    public function testSetIdentifier()
+    {
+        $this->user->setIdentifier(17);
+        $this->assertSame(17, $this->user->getIdentifier());
+    }
+
     public function testGetUsername()
     {
         $this->assertSame('testUsername', $this->user->getUsername());

@@ -72,6 +72,16 @@ class User implements UserEntityInterface
     }
 
     /**
+     * Set identifier
+     *
+     * @param int $identifier
+     */
+    public function setIdentifier(int $identifier)
+    {
+        $this->id = $identifier;
+    }
+
+    /**
      * Get username
      *
      * @return string
