@@ -17,7 +17,7 @@ use Zend\Crypt\Password\Bcrypt;
 
 class ClientRepositoryTest extends EntityManagerAwareTestCase
 {
-    private $repository;
+    private $repository, $bcrypt;
 
     protected function setUp()
     {
@@ -31,12 +31,22 @@ class ClientRepositoryTest extends EntityManagerAwareTestCase
         $this->truncateEntities([
             Client::class
         ]);
-        $this->repository = new ClientRepository($this->getEntityManager());
+
+        $this->bcrypt = $this->getMockBuilder(Bcrypt::class)
+            ->setMethods(['verify'])
+            ->getMock();
+
+        $this->repository = new ClientRepository($this->getEntityManager(), $this->bcrypt);
     }
 
     public function testGetEntityManager()
     {
         $this->assertSame($this->getEntityManager(), $this->repository->getEntityManager());
+    }
+
+    public function testGetBcrypt()
+    {
+        $this->assertSame($this->bcrypt, $this->repository->getBcrypt());
     }
 
     public function testGetClientEntity()
@@ -71,22 +81,32 @@ class ClientRepositoryTest extends EntityManagerAwareTestCase
 
     public function testGetClientEntityMustValidateSecret()
     {
-        $bcrypt = new Bcrypt();
         $em = $this->getEntityManager();
-        $client = new Client('testIdentifier', $bcrypt->create('testSecret'), 'testName', 'http://testRedirectUri', array('code', 'password'));
+        $client = new Client('testIdentifier', 'cryptedTestSecret', 'testName', 'http://testRedirectUri', array('code', 'password'));
         $em->persist($client);
         $em->flush();
+
+        $this->bcrypt->expects($this->once())
+            ->method('verify')
+            ->with($this->equalTo('testSecret'),
+                   $this->equalTo('cryptedTestSecret'))
+            ->will($this->returnValue(true));
 
         $this->assertEquals($client, $this->repository->getClientEntity('testIdentifier', 'code', 'testSecret', true));
     }
 
     public function testGetClientEntityMustValidateSecretInvalidSecretReturnsNull()
     {
-        $bcrypt = new Bcrypt();
         $em = $this->getEntityManager();
-        $client = new Client('testIdentifier', $bcrypt->create('testSecret'), 'testName', 'http://testRedirectUri', array('code', 'password'));
+        $client = new Client('testIdentifier', 'cryptedTestSecret', 'testName', 'http://testRedirectUri', array('code', 'password'));
         $em->persist($client);
         $em->flush();
+
+        $this->bcrypt->expects($this->once())
+            ->method('verify')
+            ->with($this->equalTo('InvalidSecret'),
+                   $this->equalTo('cryptedTestSecret'))
+            ->will($this->returnValue(false));
 
         $this->assertNull($this->repository->getClientEntity('testIdentifier', 'code', 'InvalidSecret', true));
     }

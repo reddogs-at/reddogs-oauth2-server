@@ -18,7 +18,7 @@ use Reddogs\OAuth2\Server\Entity\Client;
 
 class UserRepositoryTest extends EntityManagerAwareTestCase
 {
-    private $repository;
+    private $repository, $bcrypt;
 
     protected function setUp()
     {
@@ -32,7 +32,12 @@ class UserRepositoryTest extends EntityManagerAwareTestCase
         $this->truncateEntities([
             User::class
         ]);
-        $this->repository = new UserRepository($this->getEntityManager());
+
+        $this->bcrypt = $this->getMockBuilder(Bcrypt::class)
+            ->setMethods(['verify'])
+            ->getMock();
+
+        $this->repository = new UserRepository($this->getEntityManager(), $this->bcrypt);
     }
 
     public function testGetEntityManager()
@@ -40,13 +45,25 @@ class UserRepositoryTest extends EntityManagerAwareTestCase
         $this->assertSame($this->getEntityManager(), $this->repository->getEntityManager());
     }
 
+    public function testGetBcrypt()
+    {
+        $this->assertSame($this->bcrypt, $this->repository->getBcrypt());
+    }
+
     public function testGetUserEntityByUserCredentials()
     {
         $em = $this->getEntityManager();
-        $bcrypt = new Bcrypt();
-        $user = new User('testUsername', $bcrypt->create('testPassword'));
+        $user = new User('testUsername', 'cryptedTestPassword');
         $em->persist($user);
         $em->flush();
+
+        $this->bcrypt->expects($this->once())
+            ->method('verify')
+            ->with($this->equalTo('testPassword'),
+                   $this->equalTo('cryptedTestPassword'))
+            ->will($this->returnValue(true));
+
+
         $this->assertEquals(
             $user,
             $this->repository->getUserEntityByUserCredentials(
@@ -58,10 +75,15 @@ class UserRepositoryTest extends EntityManagerAwareTestCase
     public function testGetUserEntityByUserCredentialsInvalidPasswordReturnsNull()
     {
         $em = $this->getEntityManager();
-        $bcrypt = new Bcrypt();
-        $user = new User('testUsername', $bcrypt->create('testPassword'));
+        $user = new User('testUsername', 'cryptedTestPassword');
         $em->persist($user);
         $em->flush();
+
+        $this->bcrypt->expects($this->once())
+            ->method('verify')
+            ->with($this->equalTo('invalidPassword'),
+                   $this->equalTo('cryptedTestPassword'))
+            ->will($this->returnValue(false));
         $this->assertNull(
             $this->repository->getUserEntityByUserCredentials(
                 'testUsername', 'invalidPassword', 'code', new Client()

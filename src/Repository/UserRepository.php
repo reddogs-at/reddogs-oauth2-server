@@ -20,9 +20,33 @@ class UserRepository implements UserRepositoryInterface
 {
     use EntityManagerAwareTrait;
 
-    public function __construct(EntityManager $entityManager)
+    /**
+     * Bcrypt
+     *
+     * @var Bcrypt
+     */
+    private $bcrypt;
+
+    /**
+     * Constructor
+     *
+     * @param EntityManager $entityManager
+     * @param Bcrypt $bcrypt
+     */
+    public function __construct(EntityManager $entityManager, Bcrypt $bcrypt)
     {
         $this->setEntityManager($entityManager);
+        $this->bcrypt = $bcrypt;
+    }
+
+    /**
+     * Get bcrypt
+     *
+     * @return Bcrypt
+     */
+    public function getBcrypt() : Bcrypt
+    {
+        return $this->bcrypt;
     }
 
     public function getUserEntityByUserCredentials($username, $password, $grantType, ClientEntityInterface $clientEntity)
@@ -42,7 +66,6 @@ class UserRepository implements UserRepositoryInterface
      */
     private function isValidPassword(User $user, string $password)
     {
-        $bcrypt = new Bcrypt();
-        return $bcrypt->verify($password, $user->getPassword());
+        return $this->getBcrypt()->verify($password, $user->getPassword());
     }
 }

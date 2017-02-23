@@ -19,9 +19,33 @@ class ClientRepository implements ClientRepositoryInterface
 {
     use EntityManagerAwareTrait;
 
-    public function __construct(EntityManager $entityManager)
+    /**
+     * Bcrypt
+     *
+     * @var Bcrypt
+     */
+    private $bcrypt;
+
+    /**
+     * Constructor
+     *
+     * @param EntityManager $entityManager
+     * @param Bcrypt $bcrypt
+     */
+    public function __construct(EntityManager $entityManager, Bcrypt $bcrypt)
     {
         $this->setEntityManager($entityManager);
+        $this->bcrypt = $bcrypt;
+    }
+
+    /**
+     * Get bcrypt
+     *
+     * @return Bcrypt
+     */
+    public function getBcrypt() : Bcrypt
+    {
+        return $this->bcrypt;
     }
 
     /**
@@ -69,8 +93,7 @@ class ClientRepository implements ClientRepositoryInterface
     private function isValidSecret(Client $client, string $clientSecret = null, bool $mustValidateSecret)
     {
         if (true === $mustValidateSecret) {
-            $bcrypt = new Bcrypt();
-            return $bcrypt->verify($clientSecret, $client->getSecret());
+            return $this->getBcrypt()->verify($clientSecret, $client->getSecret());
         }
         return true;
     }
