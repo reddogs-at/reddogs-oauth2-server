@@ -16,18 +16,18 @@ class UserTest extends TestCase
 
     protected function setUp()
     {
-        $this->user = new User('testUsername', 'testPassword');
+        $this->user = new User('testIdentifier', 'testUsername', 'testPassword');
     }
 
     public function testGetIdentifier()
     {
-        $this->assertNull($this->user->getIdentifier());
+        $this->assertSame('testIdentifier', $this->user->getIdentifier());
     }
 
     public function testSetIdentifier()
     {
-        $this->user->setIdentifier(17);
-        $this->assertSame(17, $this->user->getIdentifier());
+        $this->user->setIdentifier('newIdentifier');
+        $this->assertSame('newIdentifier', $this->user->getIdentifier());
     }
 
     public function testGetUsername()

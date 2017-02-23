@@ -15,12 +15,17 @@ class ScopeTest extends TestCase
 {
     protected function setUp()
     {
-        $this->scope = new Scope();
+        $this->scope = new Scope('testIdentifier');
     }
 
-    public function testGetidentifier()
+    public function testGetId()
     {
-        $this->assertNull($this->scope->getIdentifier());
+        $this->assertNull($this->scope->getId());
+    }
+
+    public function testGetIdentifier()
+    {
+        $this->assertSame('testIdentifier', $this->scope->getIdentifier());
     }
 
     public function testJsonSerialize()

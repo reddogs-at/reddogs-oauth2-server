@@ -30,6 +30,15 @@ class User implements UserEntityInterface
     private $id;
 
     /**
+     * Identifier
+     *
+     * @ORM\Column(type="string")
+     *
+     * @var string
+     */
+    private $identifier;
+
+    /**
      * Username
      *
      * @ORM\Column(type="string")
@@ -50,13 +59,25 @@ class User implements UserEntityInterface
     /**
      * Constructor
      *
+     * @param string $identifier
      * @param string $username
      * @param string $password
      */
-    public function __construct(string $username = null, string $password = null)
+    public function __construct(string $identifier, string $username = null, string $password = null)
     {
+        $this->identifier = $identifier;
         $this->username = $username;
         $this->password = $password;
+    }
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -68,17 +89,17 @@ class User implements UserEntityInterface
      */
     public function getIdentifier()
     {
-        return $this->id;
+        return $this->identifier;
     }
 
     /**
      * Set identifier
      *
-     * @param int $identifier
+     * @param string $identifier
      */
-    public function setIdentifier(int $identifier)
+    public function setIdentifier(string $identifier)
     {
-        $this->id = $identifier;
+        $this->identifier = $identifier;
     }
 
     /**

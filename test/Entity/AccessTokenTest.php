@@ -24,16 +24,13 @@ class AccessTokenTest extends TestCase
     protected function setUp()
     {
         $this->client = new Client('testIdentifier');
-        $this->user = new User('testUsername');
-        $this->user->setIdentifier(17);
         $this->expiryDateTime = new \DateTime();
-        $this->accessToken = new AccessToken('testIdentifier', $this->client, $this->user, $this->expiryDateTime);
+        $this->accessToken = new AccessToken('testIdentifier', $this->client, 17, $this->expiryDateTime);
     }
 
-    public function testConstructWithNullParams()
+    public function testGetId()
     {
-        $accessToken = new AccessToken();
-        $this->assertNull($accessToken->getUserIdentifier());
+        $this->assertNull($this->accessToken->getId());
     }
 
     public function testGetIdentifier()
@@ -46,11 +43,6 @@ class AccessTokenTest extends TestCase
         $this->assertSame($this->client, $this->accessToken->getClient());
     }
 
-    public function testGetUser()
-    {
-        $this->assertSame($this->user, $this->accessToken->getUser());
-    }
-
     public function testGetUserIdentifier()
     {
         $this->assertSame(17, $this->accessToken->getUserIdentifier());
@@ -60,7 +52,6 @@ class AccessTokenTest extends TestCase
     {
         $this->accessToken->setUserIdentifier(23);
         $this->assertSame(23, $this->accessToken->getUserIdentifier());
-        $this->assertNull($this->accessToken->getUser());
     }
 
     public function testGetScopes()

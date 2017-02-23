@@ -17,6 +17,7 @@ class Version20170222143331 extends AbstractMigration
     {
         $table = $schema->createTable('reddogs_oauth2_server_user');
         $table->addColumn('id', 'bigint', ['unsigned' => true, 'autoincrement' => true]);
+        $table->addColumn('identifier', 'string', ['length' => 40]);
         $table->addColumn('username', 'string', ['length' => 255]);
         $table->addColumn('password', 'string', ['length' => 80]);
 

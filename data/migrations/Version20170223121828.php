@@ -8,23 +8,20 @@ use Doctrine\DBAL\Schema\Schema;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-class Version20170222091156 extends AbstractMigration
+class Version20170223121828 extends AbstractMigration
 {
     /**
      * @param Schema $schema
      */
     public function up(Schema $schema)
     {
-        $table = $schema->createTable('reddogs_oauth2_server_client');
+        $table = $schema->createTable('reddogs_oauth2_server_scope');
         $table->addColumn('id', 'bigint', ['unsigned' => true, 'autoincrement' => true]);
         $table->addColumn('identifier', 'string', ['length' => 40]);
-        $table->addColumn('secret', 'string', ['length' => 80]);
-        $table->addColumn('name', 'string', ['length' => 64, 'notnull' => false]);
-        $table->addColumn('redirect_uri', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('grant_types', 'string', ['length' => 80, 'notnull' => false]);
 
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['identifier']);
+
     }
 
     /**
@@ -32,6 +29,6 @@ class Version20170222091156 extends AbstractMigration
      */
     public function down(Schema $schema)
     {
-        $schema->dropTable('reddogs_oauth2_server_client');
+        $schema->dropTable('reddogs_oauth2_server_scope');
     }
 }

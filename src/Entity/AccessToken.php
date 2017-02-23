@@ -13,13 +13,31 @@ use League\OAuth2\Server\Entities\Traits\AccessTokenTrait;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="reddogs_oauth2_server_access_token")
+ */
 class AccessToken implements AccessTokenEntityInterface
 {
     use AccessTokenTrait;
 
     /**
+     * Id
+     *
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue
+     *
+     * @var integer
+     */
+    private $id;
+
+    /**
      * Identifier
+     *
+     * @ORM\Column(type="string")
      *
      * @var string
      */
@@ -27,6 +45,12 @@ class AccessToken implements AccessTokenEntityInterface
 
     /**
      * Scopes
+     *
+     * @ORM\ManyToMany(targetEntity="Scope")
+     * @ORM\JoinTable(name="reddogs_oauth2_server_access_token_scope",
+     *      joinColumns={@ORM\JoinColumn(name="access_token_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="scope_id", referencedColumnName="id")}
+     * )
      *
      * @var ArrayCollection
      */
@@ -60,17 +84,24 @@ class AccessToken implements AccessTokenEntityInterface
      */
     private $client;
 
-    public function __construct($identifier = null, Client $client = null, User $user = null,
+    public function __construct($identifier = null, Client $client = null, $userId = null,
         \DateTime $expiryDateTime = null)
     {
         $this->identifier = $identifier;
         $this->client = $client;
-        $this->user = $user;
-        if (null !== $user) {
-            $this->userId = $user->getIdentifier();
-        }
+        $this->userId = $userId;
         $this->scopes = new ArrayCollection();
         $this->expiryDateTime = $expiryDateTime;
+    }
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -140,9 +171,6 @@ class AccessToken implements AccessTokenEntityInterface
      */
     public function setUserIdentifier($identifier)
     {
-        if ($this->getUser()->getIdentifier() !== $identifier) {
-            $this->user = null;
-        }
         $this->userId = $identifier;
     }
 
@@ -174,15 +202,5 @@ class AccessToken implements AccessTokenEntityInterface
     public function setClient(ClientEntityInterface $client)
     {
         $this->client = $client;
-    }
-
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 }

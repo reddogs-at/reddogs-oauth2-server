@@ -53,7 +53,7 @@ class UserRepositoryTest extends EntityManagerAwareTestCase
     public function testGetUserEntityByUserCredentials()
     {
         $em = $this->getEntityManager();
-        $user = new User('testUsername', 'cryptedTestPassword');
+        $user = new User('testIdentifier', 'testUsername', 'cryptedTestPassword');
         $em->persist($user);
         $em->flush();
 
@@ -75,7 +75,7 @@ class UserRepositoryTest extends EntityManagerAwareTestCase
     public function testGetUserEntityByUserCredentialsInvalidPasswordReturnsNull()
     {
         $em = $this->getEntityManager();
-        $user = new User('testUsername', 'cryptedTestPassword');
+        $user = new User('testIdentifier', 'testUsername', 'cryptedTestPassword');
         $em->persist($user);
         $em->flush();
 
