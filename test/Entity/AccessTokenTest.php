@@ -14,6 +14,8 @@ use Reddogs\OAuth2\Server\Entity\Client;
 use Reddogs\OAuth2\Server\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Reddogs\OAuth2\Server\Entity\Scope;
+use League\OAuth2\Server\CryptKey;
+use Lcobucci\JWT\Token;
 
 class AccessTokenTest extends TestCase
 {
@@ -26,6 +28,12 @@ class AccessTokenTest extends TestCase
         $this->user->setIdentifier(17);
         $this->expiryDateTime = new \DateTime();
         $this->accessToken = new AccessToken('testIdentifier', $this->client, $this->user, $this->expiryDateTime);
+    }
+
+    public function testConstructWithNullParams()
+    {
+        $accessToken = new AccessToken();
+        $this->assertNull($accessToken->getUserIdentifier());
     }
 
     public function testGetIdentifier()
@@ -81,5 +89,12 @@ class AccessTokenTest extends TestCase
         $expiryDateTime = new \DateTime();
         $this->accessToken->setExpiryDateTime($expiryDateTime);
         $this->assertSame($expiryDateTime, $this->accessToken->getExpiryDateTime());
+    }
+
+    public function testConvertToJWT()
+    {
+        $privateKey = new CryptKey(__DIR__ . '/_files/private.key');
+        $token = $this->accessToken->convertToJWT($privateKey);
+        $this->assertInstanceOf(Token::class, $token);
     }
 }

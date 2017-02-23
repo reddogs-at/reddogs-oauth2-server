@@ -8,75 +8,56 @@
 declare(strict_types = 1);
 namespace Reddogs\OAuth2\Server\Entity;
 
-use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
-use League\OAuth2\Server\Entities\Traits\AccessTokenTrait;
+use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 
-class AccessToken implements AccessTokenEntityInterface
+class AuthCode implements AuthCodeEntityInterface
 {
-    use AccessTokenTrait;
-
-    /**
-     * Identifier
-     *
-     * @var string
-     */
     private $identifier;
 
     /**
-     * Scopes
-     *
-     * @var ArrayCollection
+     * @var null|string
      */
+    private $redirectUri;
+
+   /**
+    * @var ArrayCollection
+    */
     private $scopes;
 
     /**
-     * Expiry date time
-     *
      * @var \DateTime
      */
     private $expiryDateTime;
 
     /**
-     * User identifier
-     *
      * @var int
      */
-    private  $userId;
+    private $userId;
 
     /**
-     * User
-     *
-     * @var User
-     */
-    private $user;
-
-    /**
-     * Client
-     *
      * @var ClientEntityInterface
      */
     private $client;
 
-    public function __construct($identifier = null, Client $client = null, User $user = null,
-        \DateTime $expiryDateTime = null)
+    public function __construct($identifier = null, Client $client = null, int $userId = null,
+        string $redirectUri = null, \DateTime $expiryDateTime = null)
     {
         $this->identifier = $identifier;
         $this->client = $client;
-        $this->user = $user;
-        if (null !== $user) {
-            $this->userId = $user->getIdentifier();
-        }
-        $this->scopes = new ArrayCollection();
+        $this->userId = $userId;
+        $this->redirectUri = $redirectUri;
         $this->expiryDateTime = $expiryDateTime;
+        $this->scopes = new ArrayCollection();
     }
 
     /**
      * Get identifier
      *
-     * @return string
+     * {@inheritDoc}
+     * @see \League\OAuth2\Server\Entities\RefreshTokenEntityInterface::getIdentifier()
      */
     public function getIdentifier()
     {
@@ -84,13 +65,27 @@ class AccessToken implements AccessTokenEntityInterface
     }
 
     /**
-     * Set identifier
-     *
-     * @param string $identifier
+     * @param mixed $identifier
      */
     public function setIdentifier($identifier)
     {
         $this->identifier = $identifier;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectUri()
+    {
+        return $this->redirectUri;
+    }
+
+    /**
+     * @param string $uri
+     */
+    public function setRedirectUri($uri)
+    {
+        $this->redirectUri = $uri;
     }
 
     /**
@@ -134,15 +129,12 @@ class AccessToken implements AccessTokenEntityInterface
     }
 
     /**
-     * Set user identifier
-     * {@inheritDoc}
-     * @see \League\OAuth2\Server\Entities\TokenInterface::setUserIdentifier()
+     * Set the identifier of the user associated with the token.
+     *
+     * @param string|int $identifier The identifier of the user
      */
     public function setUserIdentifier($identifier)
     {
-        if ($this->getUser()->getIdentifier() !== $identifier) {
-            $this->user = null;
-        }
         $this->userId = $identifier;
     }
 
@@ -174,15 +166,5 @@ class AccessToken implements AccessTokenEntityInterface
     public function setClient(ClientEntityInterface $client)
     {
         $this->client = $client;
-    }
-
-    /**
-     * Get user
-     *
-     * @return User
-     */
-    public function getUser()
-    {
-        return $this->user;
     }
 }
