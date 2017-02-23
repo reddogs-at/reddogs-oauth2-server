@@ -31,7 +31,8 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * Get new refresh token
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface::getNewRefreshToken()
      */
     public function getNewRefreshToken()
@@ -43,7 +44,8 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * Persist new refresh token
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface::persistNewRefreshToken()
      */
     public function persistNewRefreshToken(RefreshTokenEntityInterface $refreshTokenEntity)
@@ -56,21 +58,33 @@ class RefreshTokenRepository implements RefreshTokenRepositoryInterface
     /**
      * Revoke refresh token
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface::revokeRefreshToken()
      */
     public function revokeRefreshToken($tokenId)
     {
+        $em = $this->getEntityManager();
+        $refreshToken = $em->getRepository(RefreshToken::class)->findOneBy([
+            'identifier' => $tokenId
+        ]);
+        $em->remove($refreshToken);
+        $em->flush($refreshToken);
     }
 
     /**
      * Is refresh token revoked
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
+     *
      * @see \League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface::isRefreshTokenRevoked()
      */
     public function isRefreshTokenRevoked($tokenId)
     {
-
+        return (null === $this->getEntityManager()
+            ->getRepository(RefreshToken::class)
+            ->findOneBy([
+            'identifier' => $tokenId
+        ]));
     }
 }

@@ -70,4 +70,47 @@ class RefreshTokenRepositoryTest extends EntityManagerAwareTestCase
 
         $this->assertNotNull($refreshToken->getId());
     }
+
+    public function testRevokeRefreshToken()
+    {
+        $em = $this->getEntityManager();
+
+        $client = new Client('testIdentifier', 'testSecret');
+        $em->persist($client);
+
+        $accessToken = new AccessToken('testIdentifier', $client, 17, new \DateTime());
+        $em->persist($accessToken);
+
+        $refreshToken = new RefreshToken('testTokenId', $accessToken, new \DateTime());
+        $em->persist($refreshToken);
+
+        $em->flush();
+
+        $this->repository->revokeRefreshToken('testTokenId');
+
+        $this->assertNull($em->getRepository(RefreshToken::class)->findOneBy(['identifier' => 'testTokenId']));
+    }
+
+    public function testIsRefreshTokenRevokedExistingTokenReturnsFalse()
+    {
+        $em = $this->getEntityManager();
+
+        $client = new Client('testIdentifier', 'testSecret');
+        $em->persist($client);
+
+        $accessToken = new AccessToken('testIdentifier', $client, 17, new \DateTime());
+        $em->persist($accessToken);
+
+        $refreshToken = new RefreshToken('testTokenId', $accessToken, new \DateTime());
+        $em->persist($refreshToken);
+
+        $em->flush();
+
+        $this->assertFalse($this->repository->isRefreshTokenRevoked('testTokenId'));
+    }
+
+    public function testIsRefreshTokenRevokedDeletedTokenReturnsTrue()
+    {
+        $this->assertTrue($this->repository->isRefreshTokenRevoked('testTokenId'));
+    }
 }
