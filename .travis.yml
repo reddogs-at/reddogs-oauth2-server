@@ -16,7 +16,7 @@ before_install:
 install:
   - travis_retry composer install --no-interaction --prefer-source
 before_script:
-  - vendor/bin/reddogs-migrations migrations:migrate-all
+  - vendor/bin/reddogs-migrations migrations:migrate-all -n
 script:
   - vendor/bin/phpunit
 
