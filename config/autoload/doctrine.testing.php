@@ -8,7 +8,7 @@ return [
                     'host'     => 'localhost',
                     'port'     => '3306',
                     'user'     => 'root',
-                    'password' => 'admin',
+                    'password' => '',
                     'dbname'   => 'reddogs_oauth2_server',
                     'driverOptions' => [
                         PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
