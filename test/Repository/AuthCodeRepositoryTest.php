@@ -13,6 +13,7 @@ use Reddogs\OAuth2\Server\ModuleConfig;
 use Zend\Expressive\ConfigManager\PhpFileProvider;
 use Reddogs\OAuth2\Server\Entity\AuthCode;
 use Reddogs\OAuth2\Server\Repository\AuthCodeRepository;
+use Reddogs\OAuth2\Server\Entity\Client;
 
 class AuthCodeRepositoryTest extends EntityManagerAwareTestCase
 {
@@ -31,11 +32,31 @@ class AuthCodeRepositoryTest extends EntityManagerAwareTestCase
 
         $this->truncateEntities([
             AuthCode::class,
+            Client::class,
         ]);
     }
 
     public function testGetEntityManager()
     {
         $this->assertSame($this->getEntityManager(), $this->repository->getEntityManager());
+    }
+
+    public function testGetNewAuthCode()
+    {
+        $authCode = $this->repository->getNewAuthCode();
+        $this->assertInstanceOf(AuthCode::class, $authCode);
+    }
+
+    public function testPersistNewAuthCode()
+    {
+        $em = $this->getEntityManager();
+
+        $client = new Client('testIdentifier', 'testSecret');
+        $em->persist($client);
+
+        $authCode = new AuthCode('testIdentifier', $client, 17, 'http://testRedirectUri', new \DateTime());
+
+        $this->repository->persistNewAuthCode($authCode);
+        $this->assertNotNull($authCode->getId());
     }
 }

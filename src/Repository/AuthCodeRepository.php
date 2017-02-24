@@ -12,6 +12,7 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use Reddogs\Doctrine\ORM\EntityManagerAwareTrait;
 use Doctrine\ORM\EntityManager;
+use Reddogs\OAuth2\Server\Entity\AuthCode;
 
 class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
@@ -30,7 +31,7 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function getNewAuthCode()
     {
-
+        return new AuthCode();
     }
 
     /**
@@ -41,7 +42,9 @@ class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     public function persistNewAuthCode(AuthCodeEntityInterface $authCodeEntity)
     {
-
+        $em = $this->getEntityManager();
+        $em->persist($authCodeEntity);
+        $em->flush($authCodeEntity);
     }
 
     /**
